@@ -1,4 +1,5 @@
 use std::fmt;
+use std::ops::{Mul};
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum GeneBit {
@@ -9,12 +10,7 @@ pub enum GeneBit {
 
 impl fmt::Display for GeneBit {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let show_value = match *self {
-            GeneBit::Zero => 0,
-            GeneBit::One => 1,
-            GeneBit::Three => 2,
-        };
-        write!(f, "{}", show_value)
+        write!(f, "{}", self.show_value())
     }
 }
 
@@ -39,8 +35,16 @@ impl GeneBit {
         }
     }
 
+    pub fn show_value(&self) -> u32 {
+        match self {
+            GeneBit::Zero => 0,
+            GeneBit::One => 1,
+            GeneBit::Three => 2,
+        }
+    }
+
     pub fn hybridize(&self, another: &GeneBit) -> Possibilities {
-        match (self.value(), another.value()) {
+        match (self.show_value(), another.show_value()) {
             (0, 0) => Possibilities::new(&[(1.0, "0")]),
             (0, 1) => Possibilities::new(&[(0.5, "0"), (0.5, "1")]),
             (0, 2) => Possibilities::new(&[(1.0, "1")]),
@@ -55,6 +59,14 @@ impl GeneBit {
     }
 }
 
+impl Mul for GeneBit {
+    type Output = Possibilities;
+    fn mul(self, rhs: Self) -> Self::Output {
+        self.hybridize(&rhs)
+    }
+}
+
+#[derive(Debug, PartialEq)]
 pub struct Possibility {
     p: f32,
     v: Gene,
@@ -73,6 +85,7 @@ impl Possibility {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Possibilities {
     ps: Vec<Possibility>,
 }
@@ -132,5 +145,13 @@ mod test {
                 GeneBit::Zero
             ])
         )
+    }
+
+    #[test]
+    fn test_mul() {
+        assert_eq!(
+            GeneBit::from_number(0) * GeneBit::from_number(2),
+            Possibilities::new(&[(1.0, "1")])
+        );
     }
 }
