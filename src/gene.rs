@@ -7,13 +7,6 @@ pub enum GeneBit {
     Three = 2,
 }
 
-pub struct Possibility {
-    p: f32,
-    v: GeneBit,
-}
-
-pub struct Children(Vec<Possibility>);
-
 impl fmt::Display for GeneBit {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let show_value = match *self {
@@ -46,78 +39,48 @@ impl GeneBit {
         }
     }
 
-    pub fn hybridize(&self, another: &GeneBit) -> Children {
-        match (&self, another) {
-            (GeneBit::Zero, GeneBit::Zero) => Children(vec![Possibility {
-                p: 1.0,
-                v: GeneBit::Zero,
-            }]),
-            (GeneBit::Zero, GeneBit::One) => Children(vec![
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::Zero,
-                },
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::One,
-                },
-            ]),
-            (GeneBit::Zero, GeneBit::Three) => Children(vec![Possibility {
-                p: 1.0,
-                v: GeneBit::One,
-            }]),
-            (GeneBit::One, GeneBit::Zero) => Children(vec![
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::Zero,
-                },
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::One,
-                },
-            ]),
-            (GeneBit::One, GeneBit::One) => Children(vec![
-                Possibility {
-                    p: 0.25,
-                    v: GeneBit::Zero,
-                },
-                Possibility {
-                    p: 0.25,
-                    v: GeneBit::Three,
-                },
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::One,
-                },
-            ]),
-            (GeneBit::One, GeneBit::Three) => Children(vec![
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::One,
-                },
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::Three,
-                },
-            ]),
-            (GeneBit::Three, GeneBit::Zero) => Children(vec![Possibility {
-                p: 1.0,
-                v: GeneBit::One,
-            }]),
-            (GeneBit::Three, GeneBit::One) => Children(vec![
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::One,
-                },
-                Possibility {
-                    p: 0.5,
-                    v: GeneBit::Three,
-                },
-            ]),
-            (GeneBit::Three, GeneBit::Three) => Children(vec![Possibility {
-                p: 1.0,
-                v: GeneBit::Three,
-            }]),
+    pub fn hybridize(&self, another: &GeneBit) -> Possibilities {
+        match (self.value(), another.value()) {
+            (0, 0) => Possibilities::new(&[(1.0, 0)]),
+            (0, 1) => Possibilities::new(&[(0.5, 0), (0.5, 1)]),
+            (0, 2) => Possibilities::new(&[(1.0, 1)]),
+            (1, 0) => Possibilities::new(&[(0.5, 0), (0.5, 1)]),
+            (1, 1) => Possibilities::new(&[(0.25, 0), (0.25, 2), (0.5, 1)]),
+            (1, 2) => Possibilities::new(&[(0.5, 1), (0.5, 2)]),
+            (2, 0) => Possibilities::new(&[(1.0, 1)]),
+            (2, 1) => Possibilities::new(&[(0.5, 1), (0.5, 2)]),
+            (2, 2) => Possibilities::new(&[(1.0, 2)]),
+            _ => panic!("impossible"),
+        }
+    }
+}
+
+pub struct Possibility {
+    p: f32,
+    v: GeneBit,
+}
+
+impl Possibility {
+    pub fn new(p: f32, v: u32) -> Self {
+        Possibility {
+            p,
+            v: GeneBit::from_number(v),
+        }
+    }
+
+    pub fn from_tuple((p, v): (f32, u32)) -> Self {
+        Possibility::new(p, v)
+    }
+}
+
+pub struct Possibilities {
+    ps: Vec<Possibility>,
+}
+
+impl Possibilities {
+    pub fn new(ps: &[(f32, u32)]) -> Self {
+        Possibilities {
+            ps: ps.iter().map(|p| Possibility::from_tuple(*p)).collect(),
         }
     }
 }
@@ -136,9 +99,7 @@ impl Gene {
     }
 
     pub fn from_string(str: &str) -> Self {
-        Gene(
-            str.chars().rev().map(|c| GeneBit::from_char(c)).collect()
-        )
+        Gene(str.chars().rev().map(|c| GeneBit::from_char(c)).collect())
     }
 }
 
