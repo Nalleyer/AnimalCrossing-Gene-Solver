@@ -87,3 +87,12 @@ pub fn character(gene4: &Gene) -> Color {
         _ => panic!("invalid gene"),
     }
 }
+
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_seed_white() {
+        assert_eq!(character(&Gene::from_string("0200")), Color::Yellow);
+    }
+}

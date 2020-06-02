@@ -26,6 +26,18 @@ impl fmt::Display for GeneBit {
 }
 
 impl GeneBit {
+    pub fn from_number(value: u32) -> Self {
+        match value {
+            0 => GeneBit::Zero,
+            1 => GeneBit::One,
+            _ => GeneBit::Three,
+        }
+    }
+
+    pub fn from_char(ch: char) -> Self {
+        Self::from_number(ch.to_digit(10).unwrap())
+    }
+
     pub fn value(&self) -> u32 {
         match self {
             GeneBit::Zero => 0,
@@ -122,6 +134,12 @@ impl Gene {
             .enumerate()
             .fold(0, |acc, (index, bit)| acc | (bit.value() << (index * 2)))
     }
+
+    pub fn from_string(str: &str) -> Self {
+        Gene(
+            str.chars().rev().map(|c| GeneBit::from_char(c)).collect()
+        )
+    }
 }
 
 mod test {
@@ -140,5 +158,18 @@ mod test {
             48u32
         );
         assert_eq!(Gene(vec![GeneBit::One]).value(), 1u32);
+    }
+
+    #[test]
+    fn test_from_string() {
+        assert_eq!(
+            Gene::from_string("0200"),
+            Gene(vec![
+                GeneBit::Zero,
+                GeneBit::Zero,
+                GeneBit::Three,
+                GeneBit::Zero
+            ])
+        )
     }
 }
