@@ -92,7 +92,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_seed_white() {
+    fn test_seed_yellow() {
         assert_eq!(character(&Gene::from_string("0200")), Color::Yellow);
     }
 }
