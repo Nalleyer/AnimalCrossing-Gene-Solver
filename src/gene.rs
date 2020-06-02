@@ -41,15 +41,15 @@ impl GeneBit {
 
     pub fn hybridize(&self, another: &GeneBit) -> Possibilities {
         match (self.value(), another.value()) {
-            (0, 0) => Possibilities::new(&[(1.0, 0)]),
-            (0, 1) => Possibilities::new(&[(0.5, 0), (0.5, 1)]),
-            (0, 2) => Possibilities::new(&[(1.0, 1)]),
-            (1, 0) => Possibilities::new(&[(0.5, 0), (0.5, 1)]),
-            (1, 1) => Possibilities::new(&[(0.25, 0), (0.25, 2), (0.5, 1)]),
-            (1, 2) => Possibilities::new(&[(0.5, 1), (0.5, 2)]),
-            (2, 0) => Possibilities::new(&[(1.0, 1)]),
-            (2, 1) => Possibilities::new(&[(0.5, 1), (0.5, 2)]),
-            (2, 2) => Possibilities::new(&[(1.0, 2)]),
+            (0, 0) => Possibilities::new(&[(1.0, "0")]),
+            (0, 1) => Possibilities::new(&[(0.5, "0"), (0.5, "1")]),
+            (0, 2) => Possibilities::new(&[(1.0, "1")]),
+            (1, 0) => Possibilities::new(&[(0.5, "0"), (0.5, "1")]),
+            (1, 1) => Possibilities::new(&[(0.25, "0"), (0.25, "2"), (0.5, "1")]),
+            (1, 2) => Possibilities::new(&[(0.5, "1"), (0.5, "2")]),
+            (2, 0) => Possibilities::new(&[(1.0, "1")]),
+            (2, 1) => Possibilities::new(&[(0.5, "1"), (0.5, "2")]),
+            (2, 2) => Possibilities::new(&[(1.0, "2")]),
             _ => panic!("impossible"),
         }
     }
@@ -57,19 +57,19 @@ impl GeneBit {
 
 pub struct Possibility {
     p: f32,
-    v: GeneBit,
+    v: Gene,
 }
 
 impl Possibility {
-    pub fn new(p: f32, v: u32) -> Self {
+    pub fn new(p: f32, g: &str) -> Self {
         Possibility {
             p,
-            v: GeneBit::from_number(v),
+            v: Gene::from_string(g),
         }
     }
 
-    pub fn from_tuple((p, v): (f32, u32)) -> Self {
-        Possibility::new(p, v)
+    pub fn from_tuple((p, g): (f32, &str)) -> Self {
+        Possibility::new(p, g)
     }
 }
 
@@ -78,7 +78,7 @@ pub struct Possibilities {
 }
 
 impl Possibilities {
-    pub fn new(ps: &[(f32, u32)]) -> Self {
+    pub fn new(ps: &[(f32, &str)]) -> Self {
         Possibilities {
             ps: ps.iter().map(|p| Possibility::from_tuple(*p)).collect(),
         }
