@@ -93,6 +93,6 @@ mod test {
 
     #[test]
     fn test_seed_yellow() {
-        assert_eq!(character(&Gene::from_string("0200")), Color::Yellow);
+        assert_eq!(character(&Gene::from_human_string("0200")), Color::Yellow);
     }
 }
