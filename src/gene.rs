@@ -176,10 +176,12 @@ impl Possibilities {
         }
     }
 
-
     pub fn human_new(ps: &[(f32, &str)]) -> Self {
         Possibilities {
-            ps: ps.iter().map(|p| Possibility::from_human_tuple(*p)).collect(),
+            ps: ps
+                .iter()
+                .map(|p| Possibility::from_human_tuple(*p))
+                .collect(),
         }
     }
 
