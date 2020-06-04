@@ -1,9 +1,9 @@
 use crate::gene::{Gene};
 
 lazy_static! {
-    static ref RED_SEED: Gene = Gene::from_human_string("2001");
-    static ref WHITE_SEED: Gene = Gene::from_human_string("0010");
-    static ref YELLOW_SEED: Gene = Gene::from_human_string("0200");
+    static ref RED_SEED_4: Gene = Gene::from_human_string("2001");
+    static ref WHITE_SEED_4: Gene = Gene::from_human_string("0010");
+    static ref YELLOW_SEED_4: Gene = Gene::from_human_string("0200");
 }
 
 mod test {
@@ -13,7 +13,7 @@ mod test {
     fn test_white_seed() {
         use crate::gene::Possibilities;
         assert_eq!(
-            WHITE_SEED.hybridize(&WHITE_SEED),
+            WHITE_SEED_4.hybridize(&WHITE_SEED_4),
             Possibilities::human_new(&[(0.25, "0000"), (0.25, "0020"), (0.5, "0010"),])
         )
     }

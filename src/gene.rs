@@ -109,6 +109,29 @@ impl Gene {
             .map(|(a, b)| a.hybridize(&b))
             .fold(Possibilities::zero(), |p1, p2| p1.merge(&p2))
     }
+
+    pub fn build_all_gene_list(n: usize) -> Vec<Gene> {
+        let gene_str_list: Vec<String> = Vec::new();
+        build_gene_str_list(gene_str_list, n).iter().map(|s| Gene::from_string(s)).collect()
+    }
+}
+
+fn build_gene_str_list(gene_str_list: Vec<String>, n: usize) -> Vec<String> {
+    if n == 0 {
+        vec![String::from("0"), String::from("1"), String::from("2")]
+    } else {
+        let gene_str_list_2 = build_gene_str_list(gene_str_list, n - 1);
+        let result = ['0', '1', '2'].iter().flat_map(|c| {
+            let mut pushed = Vec::new();
+            for s in &gene_str_list_2 {
+                let mut new_s = s.clone();
+                new_s.push(*c);
+                pushed.push(new_s);
+            }
+            pushed
+        }).collect();
+        result
+    }
 }
 
 impl Mul for Gene {

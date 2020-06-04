@@ -3,8 +3,10 @@ extern crate lazy_static;
 mod character;
 mod color;
 mod gene;
-mod seed;
+mod seed4;
+
+use crate::gene::{Gene};
 
 fn main() {
-    println!("Hello, world!");
+    println!("{:?}", Gene::build_all_gene_list(3));
 }
